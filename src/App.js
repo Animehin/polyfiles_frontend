@@ -1,15 +1,30 @@
 import './App.css';
 import React from 'react'
 import {post} from 'axios';
+// import {useCookies} from "react-cookie";
 
 class App extends React.Component {
+    // cokie;
+    //
+    // doCookie() {
+    //     this.cokie = setCookie(name, value, [options])
+    // }
+
+    bytesToSize(bytes) {
+        var sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB'];
+        if (bytes === 0) return 'n/a';
+        var i = parseInt(Math.floor(Math.log(bytes) / Math.log(1024)));
+        if (i === 0) return bytes + ' ' + sizes[i];
+        return (bytes / Math.pow(1024, i)).toFixed(1) + ' ' + sizes[i];
+    }
 
     constructor(props) {
         super(props);
         this.state = {
             file: null,
             upload_response: null,
-            error_message: ''
+            error_message: '',
+            button_state: false
         }
         this.onFormSubmit = this.onFormSubmit.bind(this)
         this.onChange = this.onChange.bind(this)
@@ -21,15 +36,28 @@ class App extends React.Component {
         // console.log(e.status);
         this.fileUpload(this.state.file).then((response) => {
             this.setState({upload_response: response.data})
+            console.log(response.headers)
             this.setState({error_message: ""})
         }).catch(error => this.setState({error_message: error.message}));
     }
 
     onChange(e) {
-        if (e.target.files[0].size <= 20*1024*1024) {
-            this.setState({file: e.target.files[0]})
-            this.setState({error_message: ""})
-        } else this.setState({error_message: "File size cannot exceed 20MB"})
+        try {
+            if (e.target.files[0].size <= 20 * 1024 * 1024) {
+                this.setState({file: e.target.files[0]})
+                this.setState({error_message: ""})
+                this.setState({button_state: true})
+            } else {
+                this.setState({upload_response: null})
+                this.setState({error_message: "File size cannot exceed 20MB"})
+                this.setState({button_state: false})
+            }
+        } catch (error) {
+            this.setState({error_message: "No file chosen"})
+            this.setState({file: ""})
+            // console.log(error.message)
+        }
+
     }
 
     fileUpload(file) {
@@ -50,7 +78,9 @@ class App extends React.Component {
             <form onSubmit={this.onFormSubmit}>
                 <h1>File Upload</h1>
                 <input type="file" onChange={this.onChange}/>
-                <button type="upload">Upload</button>
+                {this.state.file && <div>File name: {this.state.file.name}</div>}
+                {this.state.file && <div>File size: {this.bytesToSize(this.state.file.size)}</div>}
+                <button type="upload" disabled={!this.state.button_state}>Upload</button>
                 <div>Response: {upload_response}</div>
                 <button type="download">Download</button>
                 <button type="change">Change file</button>
