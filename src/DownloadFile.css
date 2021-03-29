@@ -1,0 +1,24 @@
+.fancyButton {
+    transition-duration: 0.4s;
+    background-color: #4CAF50; /* Green */
+    border: none;
+    color: white;
+    padding: 16px 80px;
+    text-align: center;
+    font-size: 16px;
+    margin-bottom: 5px;
+    margin-right: 5px;
+}
+
+.fancyButton:hover {
+    background-color: lightgreen; /* Green */
+    color: black;
+}
+
+.password {
+    font-size: 16px;
+    height: 20px;
+    border: 1px;
+    color: black;
+    background-color: #D3D3D3;
+}
