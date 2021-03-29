@@ -1,16 +1,16 @@
-.fancyButton {
+.fancyButtonD {
     transition-duration: 0.4s;
     background-color: #4CAF50; /* Green */
     border: none;
     color: white;
-    padding: 16px 80px;
+    padding: 16px 32px;
     text-align: center;
     font-size: 16px;
-    margin-bottom: 5px;
+    margin-top: 5px;
     margin-right: 5px;
 }
 
-.fancyButton:hover {
+.fancyButtonD:hover {
     background-color: lightgreen; /* Green */
     color: black;
 }

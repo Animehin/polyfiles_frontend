@@ -1,8 +1,11 @@
 import React from "react";
 import "./DownloadFile.css"
-import {get, post} from "axios";
+import axios, {get, post} from "axios";
+import App from "./App";
 
-const URL = "http://localhost:8080/get/"
+const URL = "http://localhost:8080/"
+
+const FileDownload = require('js-file-download');
 
 class DownloadFile extends React.Component {
 
@@ -15,39 +18,68 @@ class DownloadFile extends React.Component {
     this.state = {
       passwordNeeded: false,
       id: props.id,
-      password: ""
+      password: "",
+      error_message: '',
+      file: null
     }
     this.setPassword = this.setPassword.bind(this)
     this.checkIfPassNeeded()
+    this.onChange = this.onChange.bind(this)
   }
 
   checkIfPassNeeded() {
     // console.log(this.props.id)
     return get('http://localhost:8080/getStats/' + this.props.id).then((response) => {
       this.state.passwordNeeded = response.data["protected"]
-      console.log(response.data["protected"])
-      console.log("tate= " + this.state.passwordNeeded)
+      // console.log(response.data["protected"])
+      // console.log("tate= " + this.state.passwordNeeded)
       this.forceUpdate()
       this.renderPass()
     })
   }
 
   downloadFile = () => {
-    const url = URL + this.props.id
-    const formData = new FormData()
+    const url = URL + "get/" + this.props.id
     let config = {
       headers: {
-        'content-type': 'multipart/form-data'
       }
     }
     if (this.state.password !== "")
       config.headers["password"] = this.state.password
-    console.log(this.state.password)
-    return post(url, formData, config)
+    return get(url, config).then(r => {
+      FileDownload(r.data, r.headers.filename)
+      // console.log(url)
+      // console.log(r.headers.filename)
+    })
+  }
+
+  removeFile = () => {
+
+  }
+
+  editFileHandler = () => {
+    const url = URL + "update"
+    const formData = new FormData()
+    formData.append('file', this.state.file)
+    let config = {
+      headers: {
+        'content-type': 'multipart/form-data',
+        'id': this.props.id
+      }
+    }
+    // console.log(r.headers.filename)
+    if (this.state.password !== "")
+      config.headers["password"] = this.state.password
+    console.log(url)
+    console.log(formData)
+    console.log(config)
+    return post(url, formData, config).then(r => {
+      console.log(r)
+    })
   }
 
   renderPass() {
-    console.log("state1= " + this.state.passwordNeeded)
+    // console.log("state1= " + this.state.passwordNeeded)
     if (this.state.passwordNeeded) {
       return (
         <input className="password"
@@ -57,19 +89,56 @@ class DownloadFile extends React.Component {
         />
       )
     }
-    console.log("state2= " + this.state.passwordNeeded)
+    // console.log("state2= " + this.state.passwordNeeded)
+  }
+
+  removeFile = () => {
+    const url = URL + "delete/" + this.props.id
+    let config = {
+      headers: {
+      }
+    }
+    // console.log(r.headers.filename)
+    if (this.state.password !== "")
+      config.headers["password"] = this.state.password
+    console.log(url)
+    console.log(config)
+    return get(url, config).then(r => {
+      console.log(r.data)
+    })
+  }
+
+  onChange(e) {
+    try {
+      if (e.target.files[0].size <= 20 * 1024 * 1024) {
+        this.setState({file: e.target.files[0]})
+        this.setState({error_message: ""})
+      } else {
+        this.setState({upload_response: null})
+        this.setState({error_message: "File size cannot exceed 20MB"})
+      }
+    } catch (error) {
+      this.setState({error_message: "No file chosen"})
+      this.setState({file: ""})
+      // console.log(error.message)
+    }
   }
 
   render() {
     this.state.id = this.props.id
     return (
       <form>
-        {this.renderPass()}
-        <a href={URL + this.props.id}>
-          <button type="button" className="fancyButton" onClick={this.downloadFile}>Download</button>
-        </a>
-        <button type="button" className="fancyButton">Remove</button>
-        <button type="button" className="fancyButton">Edit</button>
+        <div> {this.renderPass()} </div>
+        <button type="button" className="fancyButtonD" onClick={this.downloadFile}>Download</button>
+        <button type="button" className="fancyButtonD" onClick={this.removeFile}>Remove</button>
+        <div>
+          <input type="file" onChange={this.onChange} />
+          <button type="button" className="fancyButtonD" onClick={this.editFileHandler}>Re-upload File</button>
+        </div>
+        <div>
+          {this.state.error_message &&
+          <h3 className="error"> {this.state.error_message} </h3>}
+        </div>
       </form>
     )
   }
