@@ -1,10 +1,10 @@
 module.exports = {
   preset: "jest-puppeteer",
   globals: {
-    URL: "http://localhost:8080"
+    URL: "http://localhost:3000"
   },
   testMatch: [
-    "<path-to-the-tests-folder>/**.test.js"
+    "**.test.js"
   ],
   verbose: true
 };

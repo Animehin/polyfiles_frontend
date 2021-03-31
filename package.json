@@ -33,7 +33,7 @@
     "start": "react-scripts start",
     "build": "react-scripts build",
     "eject": "react-scripts eject",
-    "test": "jest"
+    "test": "jest --verbose"
   },
   "eslintConfig": {
     "extends": [
@@ -55,7 +55,7 @@
   },
   "devDependencies": {
     "faker": "^5.5.2",
-    "jest-cli": "^26.6.3",
+    "jest-cli": "^26.6.0",
     "puppeteer": "^8.0.0"
   }
 }
