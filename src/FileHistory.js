@@ -25,7 +25,7 @@ class FileHistoryClass extends React.Component {
 
   ListH() {
     let list = {"data": []}
-    let count = 0
+    let countNum = 0
     if (this.state.history.data === undefined) {
       return
     }
@@ -40,8 +40,8 @@ class FileHistoryClass extends React.Component {
         } else {
           list.data[element] = {'fileName': response.data['fileName'], 'id': response.data['_id']}
         }
-        count += 1
-        if (count === length) {
+        countNum += 1
+        if (countNum === length) {
           const listR = [];
           for (const it of list.data) {
             listR.push(<li key={it["id"]}>

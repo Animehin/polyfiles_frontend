@@ -1,7 +1,6 @@
 import React from "react";
 import "./DownloadFile.css"
-import axios, {get, post} from "axios";
-import App from "./App";
+import {get, post} from "axios";
 
 const URL = "http://localhost:8080/"
 
@@ -30,7 +29,7 @@ class DownloadFile extends React.Component {
   checkIfPassNeeded() {
     // console.log(this.props.id)
     return get('http://localhost:8080/getStats/' + this.props.id).then((response) => {
-      this.state.passwordNeeded = response.data["protected"]
+      this.setState({passwordNeeded: response.data["protected"]})
       // console.log(response.data["protected"])
       // console.log("tate= " + this.state.passwordNeeded)
       this.forceUpdate()
@@ -125,7 +124,7 @@ class DownloadFile extends React.Component {
   }
 
   render() {
-    this.state.id = this.props.id
+    this.setState({id: this.props.id})
     return (
       <form>
         <div> {this.renderPass()} </div>
