@@ -124,7 +124,7 @@ class DownloadFile extends React.Component {
   }
 
   render() {
-    this.setState({id: this.props.id})
+    this.state.id = this.props.id
     return (
       <form>
         <div> {this.renderPass()} </div>
