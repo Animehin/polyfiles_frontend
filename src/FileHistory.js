@@ -64,12 +64,12 @@ class FileHistoryClass extends React.Component {
     // console.log("sss")
     if (this.state.ready) {
       return (
-        <ul className="ul">
+        <ul className="ul" id="ul_fh">
           {this.state.listR}
         </ul>)
     }
     return (
-      <div><RingLoader color={"#ffffff"} loading={true} css={{
+      <div id="RingLoader"><RingLoader color={"#ffffff"} loading={true} css={{
         display: "block", margin: "50px auto"
       }} size={50}/></div>)
   }

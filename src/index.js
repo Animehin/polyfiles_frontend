@@ -8,12 +8,12 @@ import RouterApp from "./RouterApp";
 import FileHistory from "./FileHistory";
 
 ReactDOM.render(
-        <CookiesProvider>
-                <BrowserRouter>
-                    <FileHistory />
-                    <RouterApp />
-                </BrowserRouter>
-        </CookiesProvider>,
+    <CookiesProvider>
+      <BrowserRouter>
+        <FileHistory/>
+        <RouterApp/>
+      </BrowserRouter>
+    </CookiesProvider>,
     document.getElementById('root')
 );
 

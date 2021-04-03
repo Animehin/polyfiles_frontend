@@ -19,7 +19,8 @@ class DownloadFile extends React.Component {
       id: props.id,
       password: "",
       error_message: '',
-      file: null
+      file: null,
+      file_name: ""
     }
     this.setPassword = this.setPassword.bind(this)
     this.checkIfPassNeeded()
@@ -30,7 +31,8 @@ class DownloadFile extends React.Component {
     // console.log(this.props.id)
     return get('http://localhost:8080/getStats/' + this.props.id).then((response) => {
       this.setState({passwordNeeded: response.data["protected"]})
-      // console.log(response.data["protected"])
+      this.setState({file_name: response.data["fileName"]})
+      console.log(response.data["fileName"])
       // console.log("tate= " + this.state.passwordNeeded)
       this.forceUpdate()
       this.renderPass()
@@ -50,10 +52,6 @@ class DownloadFile extends React.Component {
       // console.log(url)
       // console.log(r.headers.filename)
     })
-  }
-
-  removeFile = () => {
-
   }
 
   editFileHandler = () => {
@@ -127,12 +125,13 @@ class DownloadFile extends React.Component {
     this.state.id = this.props.id
     return (
       <form>
+        <h2>File name: {this.state.file_name}</h2>
         <div> {this.renderPass()} </div>
         <button type="button" className="fancyButtonD" onClick={this.downloadFile}>Download</button>
-        <button type="button" className="fancyButtonD" onClick={this.removeFile}>Remove</button>
+        <button type="button" id="fb_remove" className="fancyButtonD" onClick={this.removeFile}>Remove</button>
         <div>
           <input type="file" onChange={this.onChange} />
-          <button type="button" className="fancyButtonD" onClick={this.editFileHandler}>Re-upload File</button>
+          <button type="button" id="fb_re_upload" className="fancyButtonD" onClick={this.editFileHandler}>Re-upload File</button>
         </div>
         <div>
           {this.state.error_message &&

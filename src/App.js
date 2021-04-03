@@ -206,7 +206,7 @@ class App extends React.Component {
             </button>
           </div>
           <div style={divResStyle}>
-              <div id="response">Response: {upload_response}</div>
+            <div id="response">Response: {upload_response}</div>
             {this.renderFileUploaded()}
           </div>
           <div>
