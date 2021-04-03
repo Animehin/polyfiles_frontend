@@ -15,7 +15,7 @@ class CookiesHandler extends Component {
         const { cookies } = this.props;
         cookies.set("user", "obydul", { path: "/" }); // set the cookie
         this.setState({ user: cookies.get("user") });
-        console.log("BIBA");
+        // console.log("BIBA");
         // console.log(lel);
     };
 

@@ -1,7 +1,6 @@
 import './App.css'
 import {post} from 'axios'
 import React from "react"
-import CookiesHandler from "./Cookies"
 import {instanceOf} from "prop-types"
 import {Cookies, withCookies} from "react-cookie"
 import {SafeAreaView} from "react-native";
@@ -23,10 +22,10 @@ class App extends React.Component {
     this.fileUpload(this.state.file).then((response) => {
       this.setState({upload_response: response.data})
       this.setState({error_message: ""})
-      console.log("response.data.headers")
-      console.log(response.headers)
+      // console.log("response.data.headers")
+      // console.log(response.headers)
       if (response.data === undefined) {
-        console.log("something went wrong")
+        // console.log("something went wrong")
       } else {
         this.updateCookie(response.data)
       }
@@ -50,18 +49,18 @@ class App extends React.Component {
     const {cookies} = this.props
     cookies.set("history", cookie, {path: "/"}) // set the cookie
     this.setState({history: cookies.get("history")})
-    console.log("BIBA")
+    // console.log("BIBA")
   }
 
   handleRemoveCookie = () => {
     const {cookies} = this.props
     cookies.remove("history")
     this.setState({history: cookies.get("history")})
-    console.log("BOBA")
+    // console.log("BOBA")
   }
 
   handleCheckboxChange = event =>
-    this.setState({checked: event.target.checked})
+      this.setState({checked: event.target.checked})
 
   bytesToSize(bytes) {
     var sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB']
@@ -94,9 +93,15 @@ class App extends React.Component {
   onChange(e) {
     try {
       if (e.target.files[0].size <= 20 * 1024 * 1024) {
-        this.setState({file: e.target.files[0]})
-        this.setState({error_message: ""})
-        this.setState({button_state: true})
+        if (e.target.files[0].size < 1) {
+          this.setState({upload_response: null})
+          this.setState({error_message: "File size cannot be empty"})
+          this.setState({button_state: false})
+        } else {
+          this.setState({file: e.target.files[0]})
+          this.setState({error_message: ""})
+          this.setState({button_state: true})
+        }
       } else {
         this.setState({upload_response: null})
         this.setState({error_message: "File size cannot exceed 20MB"})
@@ -127,17 +132,17 @@ class App extends React.Component {
 
   renderFileUploaded() {
     return (
-      <div>
-        <button type="button" className="fancyButton"
-                onClick={() => navigator.clipboard.writeText(
-                  URL + 'files/' + this.state.upload_response)}>Copy file link
-        </button>
-        <a href={'/files/' + this.state.upload_response}>
-          <button type="button" className="fancyButton" style={{marginLeft: '.5rem'}}>
-            Go to file
+        <div>
+          <button type="button" className="fancyButton"
+                  onClick={() => navigator.clipboard.writeText(
+                      URL + 'files/' + this.state.upload_response)}>Copy file link
           </button>
-        </a>
-      </div>
+          <a href={'/files/' + this.state.upload_response}>
+            <button type="button" className="fancyButton" id="fancyFileUploaded" style={{marginLeft: '.5rem'}}>
+              Go to file
+            </button>
+          </a>
+        </div>
     )
   }
 
@@ -156,56 +161,59 @@ class App extends React.Component {
       display: this.state.checked ? 'block' : 'none'
     }
     return (
-      <form className="App">
-        <div style={divUplStyle}>
-          <div>
-            <h1 style={{color: 'white'}}>File Upload</h1>
-          </div>
-          <div>
-            <input type="file"
-                   onChange={this.onChange}/>
-          </div>
-          <div>
-            {this.state.file &&
-            <div>File name: {this.state.file.name}</div>}
-            {this.state.file &&
-            <div>File
-              size: {this.bytesToSize(this.state.file.size)}</div>}
-          </div>
-          <div>
-            <div style={divFileChosenStyle}>
-              <label>
-                <span>Do you wish to secure file with password?</span>
-                <input type="checkbox"
-                       checked={this.state.checked}
-                       onChange={this.handleCheckboxChange}
-                />
-              </label>
-              <div style={divPassStyle}>
-                <SafeAreaView>
-                  {/*<input className="password" type="password"*/}
-                  <input className="password"
-                         onChange={this.setPassword}
-                         value={this.state.password}
-                         placeholder="Password"
+        <form className="App">
+          <div style={divUplStyle}>
+            <div>
+              <h1 style={{color: 'white'}}>File Upload</h1>
+            </div>
+            <div>
+              <input className="file input choose boba" type="file"
+                     onChange={this.onChange}/>
+            </div>
+            <div>
+              {this.state.file &&
+              <div>File name: {this.state.file.name}</div>}
+              {this.state.file &&
+              <div>File
+                size: {this.bytesToSize(this.state.file.size)}</div>}
+            </div>
+            <div>
+              <div style={divFileChosenStyle}>
+                <label>
+                  <span>Do you wish to secure file with password?</span>
+                  <input type="checkbox"
+                         id="PasswordCheckBox"
+                         checked={this.state.checked}
+                         onChange={this.handleCheckboxChange}
                   />
-                </SafeAreaView>
+                </label>
+                <div style={divPassStyle}>
+                  <SafeAreaView>
+                    {/*<input className="password" type="password"*/}
+                    <input className="password"
+                           id="PasswordInput"
+                           onChange={this.setPassword}
+                           value={this.state.password}
+                           name="file input"
+                           placeholder="Password"
+                    />
+                  </SafeAreaView>
+                </div>
               </div>
             </div>
+            <button onClick={this.onFormSubmit} name="upload button" className="upload"
+                    disabled={!this.state.button_state}>Upload
+            </button>
           </div>
-          <button onClick={this.onFormSubmit} className="upload" disabled={!this.state.button_state}>Upload
-          </button>
-        </div>
-        <div style={divResStyle}>
-          <div>Response: {upload_response}</div>
-          <div>Cookies: {CookiesHandler.user}</div>
-          {this.renderFileUploaded()}
-        </div>
-        <div>
-          {this.state.error_message &&
-          <h3 className="error"> {this.state.error_message} </h3>}
-        </div>
-      </form>
+          <div style={divResStyle}>
+              <div id="response">Response: {upload_response}</div>
+            {this.renderFileUploaded()}
+          </div>
+          <div>
+            {this.state.error_message &&
+            <h3 className="error" id="error"> {this.state.error_message} </h3>}
+          </div>
+        </form>
     )
   }
 }
