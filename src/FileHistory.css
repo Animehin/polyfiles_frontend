@@ -5,14 +5,14 @@
     z-index: 1;
     top: 0;
     left: 0;
-    background-color: #111;
+    background-color: #515585;
     overflow-x: hidden;
     padding-top: 20px;
 }
 
 .fancyButton {
     transition-duration: 0.4s;
-    background-color: #4CAF50; /* Green */
+    background-color: #46b5d1; /* Green */
     border: none;
     color: white;
     padding: 16px 80px;
@@ -22,7 +22,7 @@
 }
 
 .fancyButton:hover {
-    background-color: lightgreen; /* Green */
+    background-color: lightblue; /* Green */
     color: black;
 }
 
@@ -44,7 +44,7 @@
 
 .fancyListButton {
     transition-duration: 0.4s;
-    background-color: #4CAF50; /* Green */
+    background-color: #46b5d1; /* Green */
     border: none;
     color: white;
     padding: 8px 6px;
@@ -56,7 +56,7 @@
 }
 
 .fancyListButton:hover {
-    background-color: lightgreen; /* Green */
+    background-color: lightblue; /* Green */
     color: black;
 
 }

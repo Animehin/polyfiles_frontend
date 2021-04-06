@@ -80,6 +80,7 @@ class DownloadFile extends React.Component {
     if (this.state.passwordNeeded) {
       return (
         <input className="password"
+               id="df_password_input"
                onChange={this.setPassword}
                value={this.state.password}
                placeholder="Password"
@@ -127,7 +128,7 @@ class DownloadFile extends React.Component {
       <form>
         <h2>File name: {this.state.file_name}</h2>
         <div> {this.renderPass()} </div>
-        <button type="button" className="fancyButtonD" onClick={this.downloadFile}>Download</button>
+        <button type="button" id="fb_download" className="fancyButtonD" onClick={this.downloadFile}>Download</button>
         <button type="button" id="fb_remove" className="fancyButtonD" onClick={this.removeFile}>Remove</button>
         <div>
           <input type="file" onChange={this.onChange} />

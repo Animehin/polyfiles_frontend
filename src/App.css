@@ -18,7 +18,7 @@
 
 .upload {
     transition-duration: 0.4s;
-    background-color: #4CAF50;
+    background-color: #46b5d1;
     border: none;
     color: white;
     padding: 15px 32px;
@@ -30,6 +30,6 @@
 }
 
 .upload:hover {
-    background-color: lightgreen;
+    background-color: lightblue;
     color: black;
 }
