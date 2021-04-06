@@ -6,6 +6,8 @@ const SHA256 = require('crypto-js/sha256')
 // console.log(value)
 // browser = await puppeteer.launch({headless: false})
 
+const download_path = 'F:\\Qt\\QtProjects\\SCOAPI\\polyfiles_frontend\\downloads'
+
 async function fileInput(page, file) {
   const elementHandle = await page.$("input[type=file]")
   await elementHandle.uploadFile(file)
@@ -13,7 +15,6 @@ async function fileInput(page, file) {
 
 async function fileDownload(page) {
   const selector_df_download_button = 'button#fb_download'
-  const download_path = 'F:\\Qt\\QtProjects\\SCOAPI\\polyfiles_frontend\\downloads'
 
   await page.waitForTimeout(50)
   await page.waitForSelector(selector_df_download_button)
@@ -24,18 +25,26 @@ async function fileDownload(page) {
   await page.waitForTimeout(200)
 }
 
-async function fileRM(page, URL, file_id) {
+async function fileRM(page, URL, file_id, pass = null) {
   const selector_remove_button = 'button#fb_remove'
+
   await page.goto(URL + "/files/" + file_id)
   await page.waitForTimeout(50)
+  if (pass) {
+    const selector_df_password_input = '#df_password_input'
+    await page.waitForSelector(selector_df_password_input)
+    await page.focus(selector_df_password_input)
+    await page.keyboard.type(pass)
+  }
   await page.waitForSelector(selector_remove_button)
   await page.click(selector_remove_button)
+  await page.waitForTimeout(50)
 }
 
-async function fileUploadWP(page) {
+async function fileUploadWP(page, pass) {
   await page.waitForSelector('input#PasswordInput')
   await page.focus('input#PasswordInput')
-  await page.keyboard.type('test')
+  await page.keyboard.type(pass)
   await clickUpload(page)
   // await page.waitForTimeout(50)
 }
@@ -45,8 +54,7 @@ async function getFileId(page) {
   let element = await page.$('#response')
   let value = await page.evaluate(el => el.textContent, element)
   let str_arr = value.split(" ")
-  const file_id = str_arr[1]
-  return file_id
+  return str_arr[1]
 }
 
 async function clickUpload(page) {
@@ -73,7 +81,8 @@ describe('HomePage test suit', () => {
   const file_legit_3 = 'raw/legit_3.txt'
   const file_empty = 'raw/empty.txt'
   const file_big = 'raw/big.txt'
-  const file_small = 'raw/small.txt'
+
+  const pass = 'test'
 
   beforeAll(async () => {
     // browser = await puppeteer.launch({headless: false})
@@ -155,14 +164,14 @@ describe('HomePage test suit', () => {
     await fileInput(page, file_legit)
     await page.waitForSelector(selector_Password_check_box)
     await page.click(selector_Password_check_box)
-    await fileUploadWP(page)
+    await fileUploadWP(page, pass)
     file_id = await getFileId(page)
 
     await page.waitForSelector(selector_df_goto_button)
     let element = await page.$(selector_df_goto_button)
     let value = await page.evaluate(el => el.textContent, element)
 
-    await fileRM(page, URL, file_id)
+    await fileRM(page, URL, file_id, pass)
     await expect(value).toMatch("Go to file")
   })
 
@@ -186,38 +195,35 @@ describe('HomePage test suit', () => {
   })
 
   it('File uploaded and added to history multiple times', async () => {
-    try {
-      let file_id = []
+    let file_id = []
 
-      await fileInput(page, file_legit)
-      await clickUpload(page)
-      file_id.push(await getFileId(page))
+    await fileInput(page, file_legit)
+    await clickUpload(page)
+    file_id.push(await getFileId(page))
 
-      await page.waitForTimeout(50)
-      await page.goto('http://localhost:3000')
-      await fileInput(page, file_legit_2)
-      await clickUpload(page)
-      file_id.push(await getFileId(page))
+    await page.waitForTimeout(50)
+    await page.goto('http://localhost:3000')
+    await fileInput(page, file_legit_2)
+    await clickUpload(page)
+    file_id.push(await getFileId(page))
 
-      await page.waitForTimeout(50)
-      await page.goto('http://localhost:3000')
-      await fileInput(page, file_legit_3)
-      await clickUpload(page)
-      file_id.push(await getFileId(page))
+    await page.waitForTimeout(50)
+    await page.goto('http://localhost:3000')
+    await fileInput(page, file_legit_3)
+    await clickUpload(page)
+    file_id.push(await getFileId(page))
 
-      await page.waitForTimeout(50)
-      await page.goto('http://localhost:3000')
-      await page.waitForTimeout(50)
-      await page.waitForSelector(selector_File_history)
-      let element = await page.$$(selector_File_history)
-      await page.waitForTimeout(50)
-      for (let el of file_id){
-        await fileRM(page, URL, el)
-      }
-      await expect(element.length.toString()).toMatch("3")
-    } catch (e) {
-      console.log(e)
+    await page.waitForTimeout(50)
+    await page.goto('http://localhost:3000')
+    await page.waitForTimeout(50)
+    await page.waitForSelector(selector_File_history)
+    let element = await page.$$(selector_File_history)
+    await page.waitForTimeout(50)
+    for (let el of file_id) {
+      await fileRM(page, URL, el)
     }
+    await page.waitForTimeout(200)
+    await expect(element.length.toString()).toMatch("3")
   })
 
   it('Remove file', async () => {
@@ -254,8 +260,8 @@ describe('HomePage test suit', () => {
     await page.waitForTimeout(50)
 
     await page.waitForSelector(selector_File_history)
-    element = await page.$(selector_File_history)
-    value = await page.evaluate(el => el.textContent, element)
+    let element = await page.$(selector_File_history)
+    let value = await page.evaluate(el => el.textContent, element)
 
     await fileRM(page, URL, file_id)
     await expect(value).toMatch("legit_2.txt")
@@ -288,7 +294,7 @@ describe('HomePage test suit', () => {
     await page.waitForSelector(selector_Password_check_box)
     await page.click(selector_Password_check_box)
 
-    await fileUploadWP(page)
+    await fileUploadWP(page, pass)
     file_id = await getFileId(page)
 
     await page.waitForSelector(selector_df_goto_button)
@@ -298,10 +304,10 @@ describe('HomePage test suit', () => {
 
     await page.waitForSelector(selector_df_password_input)
     await page.focus(selector_df_password_input)
-    await page.keyboard.type('test')
+    await page.keyboard.type(pass)
     await page.waitForTimeout(200)
 
-    await fileRM(page, URL, file_id)
+    await fileRM(page, URL, file_id, pass)
     const downloaded = await fs.exists("downloads/legit.txt")
     expect(downloaded).toEqual(false)
   })
@@ -312,7 +318,7 @@ describe('HomePage test suit', () => {
     await page.waitForSelector(selector_Password_check_box)
     await page.click(selector_Password_check_box)
 
-    await fileUploadWP(page)
+    await fileUploadWP(page, pass)
     file_id = await getFileId(page)
 
     await page.waitForSelector(selector_df_goto_button)
@@ -321,7 +327,7 @@ describe('HomePage test suit', () => {
 
     await page.waitForSelector(selector_df_password_input)
     await page.focus(selector_df_password_input)
-    await page.keyboard.type('test')
+    await page.keyboard.type(pass)
 
     await fileDownload(page)
 
@@ -330,10 +336,9 @@ describe('HomePage test suit', () => {
     const hash0 = SHA256(uploaded)
     const hash1 = SHA256(downloaded)
 
-    await fileRM(page, URL, file_id)
+    await fileRM(page, URL, file_id, pass)
     await fs.unlinkSync("downloads/legit_2.txt")
     expect(hash1).toEqual(hash0)
   })
-
 
 })
