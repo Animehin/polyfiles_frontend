@@ -8,6 +8,10 @@ const SHA256 = require('crypto-js/sha256')
 
 const download_path = __dirname + '\\downloads'
 
+const delay = millis => new Promise((resolve, reject) => {
+  setTimeout(_ => resolve(), millis)
+});
+
 async function fileInput(page, file) {
   const elementHandle = await page.$("input[type=file]")
   await elementHandle.uploadFile(file)
@@ -87,8 +91,7 @@ describe('HomePage test suit', () => {
   beforeAll(async () => {
     // browser = await puppeteer.launch({headless: false})
     browser = await puppeteer.launch()
-    page = await context.newPage()
-    page.waitForTimeout(60000)
+    await delay(4900)
   })
 
   beforeEach(async () => {
