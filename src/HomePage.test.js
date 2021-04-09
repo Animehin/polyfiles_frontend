@@ -4,7 +4,7 @@ const SHA256 = require('crypto-js/sha256')
 
 // await page.waitForTimeout(4000)
 // console.log(value)
-// browser = await puppeteer.launch({headless: false})
+// browser = await puppeteer.launch({headless: false}
 
 const download_path = __dirname + '\\downloads'
 
@@ -87,6 +87,8 @@ describe('HomePage test suit', () => {
   beforeAll(async () => {
     // browser = await puppeteer.launch({headless: false})
     browser = await puppeteer.launch()
+    page = await context.newPage()
+    page.waitForTimeout(60000)
   })
 
   beforeEach(async () => {
