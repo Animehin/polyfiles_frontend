@@ -6,7 +6,7 @@ const SHA256 = require('crypto-js/sha256')
 // console.log(value)
 // browser = await puppeteer.launch({headless: false})
 
-const download_path = 'F:\\Qt\\QtProjects\\SCOAPI\\polyfiles_frontend\\downloads'
+const download_path = __dirname + '\\downloads'
 
 async function fileInput(page, file) {
   const elementHandle = await page.$("input[type=file]")
@@ -278,13 +278,13 @@ describe('HomePage test suit', () => {
 
     await fileDownload(page)
 
-    const downloaded = fs.readFileSync("downloads/legit.txt")
+    const downloaded = fs.readFileSync("src/downloads/legit.txt")
     const uploaded = fs.readFileSync(file_legit)
     const hash0 = SHA256(uploaded)
     const hash1 = SHA256(downloaded)
 
     await fileRM(page, URL, file_id)
-    await fs.unlinkSync("downloads/legit.txt")
+    await fs.unlinkSync("src/downloads/legit.txt")
     expect(hash1).toEqual(hash0)
   })
 
@@ -308,7 +308,7 @@ describe('HomePage test suit', () => {
     await page.waitForTimeout(200)
 
     await fileRM(page, URL, file_id, pass)
-    const downloaded = await fs.exists("downloads/legit.txt")
+    const downloaded = await fs.exists("src/downloads/legit.txt")
     expect(downloaded).toEqual(false)
   })
 
@@ -331,13 +331,13 @@ describe('HomePage test suit', () => {
 
     await fileDownload(page)
 
-    const downloaded = fs.readFileSync("downloads/legit_2.txt")
+    const downloaded = fs.readFileSync("src/downloads/legit_2.txt")
     const uploaded = fs.readFileSync(file_legit_2)
     const hash0 = SHA256(uploaded)
     const hash1 = SHA256(downloaded)
 
     await fileRM(page, URL, file_id, pass)
-    await fs.unlinkSync("downloads/legit_2.txt")
+    await fs.unlinkSync("src/downloads/legit_2.txt")
     expect(hash1).toEqual(hash0)
   })
 
